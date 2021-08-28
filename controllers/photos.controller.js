@@ -8,16 +8,28 @@ exports.add = async (req, res) => {
     const { title, author, email } = req.fields;
     const file = req.files.file;
 
-    if(title && author && email && file) { // if fields are not empty...
+    const emailPattern = new RegExp('^[a-zA-Z0-9][a-zA-Z0-9_.-]+@[a-zA-Z0-9][a-zA-Z0-9_.-]+\.{1,3}[a-zA-Z]{2,4}');
+    const textPattern = new RegExp(/(\w|\s|\.)*/, 'g');
 
+    const correctEmail = email.match(emailPattern).join('');
+    const correctAuthor = author.match(textPattern).join('');
+    const correctTitle = title.match(textPattern).join('');
+
+    if((correctEmail.length < email.length) || (correctTitle.length < title.length) || (correctAuthor.length < author.length)) {
+      throw new Error('Wrong characters used!');
+    }
+
+    if (title && author && email && file) { // if fields are not empty...
       const fileName = file.path.split('/').slice(-1)[0]; // cut only filename from full path, e.g. C:/test/abc.jpg -> abc.jpg
       const fileExt = fileName.split('.').slice(-1)[0];
-
-      if(fileExt === 'jpg' || fileExt === 'png' || fileExt === 'gif') {
+      
+      if(fileExt === 'jpg' || fileExt === 'png' || fileExt === 'gif'){
         const newPhoto = new Photo({ title, author, email, src: fileName, votes: 0 });
         await newPhoto.save(); // ...save new photo in DB
         res.json(newPhoto);
-      } else throw new Error('No kiepsko jak mam być szczery... ')
+      } else throw new Error('Wrong input!')
+
+      if (title.length > 25 || author.length > 50) throw new Error('Too many...');
 
     } else {
       throw new Error('Wrong input!');

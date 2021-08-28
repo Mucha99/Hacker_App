@@ -91,7 +91,7 @@ class SubmitPhotoForm extends React.Component {
                 </FormGroup>
                 <FormGroup>
                   <Label for="photoAuthor">Author</Label>
-                  <Input id="photoAuthor" type="text" name="author" onChange={handleChange} placeholder="Type your title here" required />
+                  <Input id="photoAuthor" type="text" maxLength="50" name="author" onChange={handleChange} placeholder="Type your title here" required />
                 </FormGroup>
                 <FormGroup>
                   <Label for="authorEmail">Author e-mail</Label>
